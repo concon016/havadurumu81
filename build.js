@@ -31,6 +31,7 @@ function pageHTML(il) {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="google-site-verification" content="z1KWBFbgHZbBm0YmH_Ej9PLyjjPVtR17RNDfYOOPh_I" />
 <title>${title}</title>
 <meta name="description" content="${desc}">
 <link rel="canonical" href="${url}">
