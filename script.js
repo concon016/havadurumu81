@@ -119,7 +119,6 @@
     initFavoritesHome();
     initTemperatureMap();
     if (document.body.dataset.ilSlug) initSehirSayfasi(document.body.dataset.ilSlug);
-    if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(function () {});
   });
 
   /* ---------------- hava kodu -> açıklama / ikon / renk grubu ---------------- */

@@ -1,19 +1,18 @@
-// havadurumu81 — minimal service worker (sadece "ana ekrana ekle" kurulabilirliği + statik dosya cache'i için)
-// Hava durumu API isteklerine asla dokunmaz, her zaman canlı veri çeker.
-
-var CACHE = "hd81-v1";
-var ASSETS = ["/style.css", "/script.js", "/data.js"];
-
+// Bu service worker artık kullanılmıyor. Önceden kayıtlı olan tarayıcılarda
+// kendini güncelleyip eski önbelleği temizler ve kaydını siler, böylece
+// site her zaman sunucudaki en güncel sürümü gösterir.
 self.addEventListener("install", function (e) {
-  e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(ASSETS); }));
   self.skipWaiting();
 });
 
-self.addEventListener("fetch", function (e) {
-  if (e.request.url.indexOf("open-meteo.com") !== -1) return;
-  e.respondWith(
-    caches.match(e.request).then(function (cached) {
-      return cached || fetch(e.request);
-    })
+self.addEventListener("activate", function (e) {
+  e.waitUntil(
+    caches.keys()
+      .then(function (keys) { return Promise.all(keys.map(function (k) { return caches.delete(k); })); })
+      .then(function () { return self.registration.unregister(); })
+      .then(function () { return self.clients.matchAll(); })
+      .then(function (clientsList) {
+        clientsList.forEach(function (client) { client.navigate(client.url); });
+      })
   );
 });
