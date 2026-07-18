@@ -59,53 +59,6 @@
     section.style.display = "";
   }
 
-  /* ---------------- ana ekrana ekle ---------------- */
-  function initInstallButton() {
-    var btn = document.getElementById("installBtn");
-    var overlay = document.getElementById("installModalOverlay");
-    if (!btn || !overlay) return;
-
-    var standalone = window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
-    if (standalone) return;
-
-    var closeBtn = document.getElementById("installModalClose");
-    var body = document.getElementById("installModalBody");
-    var deferredPrompt = null;
-    var ua = navigator.userAgent || "";
-    var isIOS = /iphone|ipad|ipod/i.test(ua) && !window.MSStream;
-    var isAndroid = /android/i.test(ua);
-
-    function manualSteps() {
-      if (isIOS) {
-        return "<ol><li>Alt ortadaki <strong>paylaş</strong> simgesine (kare + yukarı ok) dokunun.</li><li>Aşağı kaydırıp <strong>“Ana Ekrana Ekle”</strong>yi seçin.</li><li>Sağ üstten <strong>“Ekle”</strong>ye dokunun.</li></ol>";
-      }
-      if (isAndroid) {
-        return "<ol><li>Sağ üstteki <strong>⋮</strong> menüsüne dokunun.</li><li><strong>“Uygulamayı yükle”</strong> veya <strong>“Ana ekrana ekle”</strong>yi seçin.</li></ol>";
-      }
-      return "<ol><li>Tarayıcınızın adres çubuğundaki yükleme simgesine tıklayın ya da menüden <strong>“Uygulamayı yükle”</strong>yi seçin.</li></ol>";
-    }
-
-    btn.style.display = "flex";
-
-    window.addEventListener("beforeinstallprompt", function (e) {
-      e.preventDefault();
-      deferredPrompt = e;
-    });
-
-    btn.addEventListener("click", function () {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then(function () { deferredPrompt = null; });
-        return;
-      }
-      body.innerHTML = manualSteps();
-      overlay.classList.add("open");
-    });
-
-    if (closeBtn) closeBtn.addEventListener("click", function () { overlay.classList.remove("open"); });
-    overlay.addEventListener("click", function (e) { if (e.target === overlay) overlay.classList.remove("open"); });
-  }
-
   /* ---------------- arama ---------------- */
   var TRMAP = { ı: "i", İ: "i", ğ: "g", Ğ: "g", ü: "u", Ü: "u", ş: "s", Ş: "s", ö: "o", Ö: "o", ç: "c", Ç: "c" };
   function norm(s) {
@@ -165,7 +118,6 @@
     initFavButton();
     initFavoritesHome();
     initTemperatureMap();
-    initInstallButton();
     if (document.body.dataset.ilSlug) initSehirSayfasi(document.body.dataset.ilSlug);
     if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(function () {});
   });

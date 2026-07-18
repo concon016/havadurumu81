@@ -79,23 +79,6 @@ button { font-family: inherit; }
   display: flex; align-items: center; justify-content: center; cursor: pointer;
 }
 
-.install-modal-overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 100;
-  display: none; align-items: center; justify-content: center; padding: 20px;
-}
-.install-modal-overlay.open { display: flex; }
-.install-modal {
-  background: var(--surface); border-radius: var(--radius); padding: 26px 24px;
-  max-width: 360px; width: 100%; position: relative; box-shadow: var(--shadow-md);
-}
-.install-modal-close {
-  position: absolute; top: 12px; right: 12px; background: none; border: none;
-  font-size: 1.1rem; color: var(--ink-muted); cursor: pointer;
-}
-.install-modal h3 { margin: 0 0 14px; font-size: 1.1rem; }
-.install-modal ol { margin: 0; padding-left: 20px; color: var(--ink-muted); font-size: .92rem; line-height: 1.7; }
-.install-modal ol li { margin-bottom: 6px; }
-
 /* ---------- hero / search ---------- */
 .hero {
   padding: 56px 0 40px;
