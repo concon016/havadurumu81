@@ -150,7 +150,7 @@ button { font-family: inherit; }
 .weather-hero-feels { opacity: .8; font-size: .9rem; margin-top: 2px; }
 
 .weather-hero-stats {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 26px;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; margin-top: 26px;
 }
 .wh-stat {
   background: rgba(255,255,255,.16); backdrop-filter: blur(6px);
@@ -159,6 +159,13 @@ button { font-family: inherit; }
 .weather-hero.cond-snow .wh-stat, .weather-hero.cond-fog .wh-stat { background: rgba(16,32,44,.08); }
 .wh-stat .wh-label { font-size: .72rem; opacity: .8; text-transform: uppercase; letter-spacing: .04em; }
 .wh-stat .wh-value { font-size: 1.05rem; font-weight: 600; margin-top: 3px; }
+
+.fav-btn {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 100px;
+  width: 42px; height: 42px; font-size: 1.3rem; line-height: 1; cursor: pointer;
+  color: var(--ink-muted); display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.fav-btn.active { color: #FFC93C; border-color: #FFC93C; }
 
 /* ---------- tabs ---------- */
 .tabs { display: flex; gap: 6px; margin: 28px 0 18px; border-bottom: 1px solid var(--line); }

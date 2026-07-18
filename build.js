@@ -125,6 +125,9 @@ function pageHTML(il, variant) {
 <meta name="twitter:image" content="${SITE}/assets/og-image.png">
 <meta name="robots" content="index, follow">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><text y=%2219%22 font-size=%2220%22>☀️</text></svg>">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1976d2">
+<link rel="apple-touch-icon" href="/assets/icon-192.png">
 <link rel="stylesheet" href="style.css">
 <script>
   (function(){var t=localStorage.getItem("hd81-theme");if(t)document.documentElement.setAttribute("data-theme",t);})();
@@ -175,7 +178,10 @@ function pageHTML(il, variant) {
   </div>
 
   <div class="wrap" style="padding-top:18px;padding-bottom:50px;">
-    <h1 style="font-size:1.5rem;margin:0 0 16px;">${h1}</h1>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 16px;">
+      <h1 style="font-size:1.5rem;margin:0;">${h1}</h1>
+      <button class="fav-btn" id="favBtn" data-slug="${il.slug}" aria-label="Favorilere ekle" title="Favorilere ekle">☆</button>
+    </div>
 
     <div class="weather-hero" id="weatherHero">
       <div style="padding:30px;text-align:center;opacity:.7;">Hava durumu yükleniyor…</div>

@@ -16,6 +16,49 @@
     });
   }
 
+  /* ---------------- favoriler ---------------- */
+  var FAV_KEY = "hd81-favorites";
+  function getFavs() {
+    try { return JSON.parse(localStorage.getItem(FAV_KEY) || "[]"); } catch (e) { return []; }
+  }
+  function isFav(slug) { return getFavs().indexOf(slug) !== -1; }
+  function toggleFav(slug) {
+    var favs = getFavs();
+    var i = favs.indexOf(slug);
+    if (i === -1) favs.push(slug); else favs.splice(i, 1);
+    localStorage.setItem(FAV_KEY, JSON.stringify(favs));
+    return isFav(slug);
+  }
+  function initFavButton() {
+    var btn = document.getElementById("favBtn");
+    if (!btn) return;
+    var slug = btn.dataset.slug;
+    function render() {
+      var active = isFav(slug);
+      btn.textContent = active ? "★" : "☆";
+      btn.classList.toggle("active", active);
+      btn.setAttribute("aria-label", active ? "Favorilerden çıkar" : "Favorilere ekle");
+    }
+    render();
+    btn.addEventListener("click", function () { toggleFav(slug); render(); });
+  }
+  function initFavoritesHome() {
+    var section = document.getElementById("favSection");
+    if (!section) return;
+    var favs = getFavs();
+    if (!favs.length) { section.style.display = "none"; return; }
+    var list = document.getElementById("favList");
+    list.innerHTML = favs
+      .map(function (slug) {
+        var il = null;
+        for (var i = 0; i < ILLER.length; i++) if (ILLER[i].slug === slug) il = ILLER[i];
+        if (!il) return "";
+        return '<a href="' + slug + '-hava-durumu.html">' + il.ad + "</a>";
+      })
+      .join("");
+    section.style.display = "";
+  }
+
   /* ---------------- arama ---------------- */
   var TRMAP = { ı: "i", İ: "i", ğ: "g", Ğ: "g", ü: "u", Ü: "u", ş: "s", Ş: "s", ö: "o", Ö: "o", ç: "c", Ç: "c" };
   function norm(s) {
@@ -72,7 +115,10 @@
   document.addEventListener("DOMContentLoaded", function () {
     initTheme();
     initSearch();
+    initFavButton();
+    initFavoritesHome();
     if (document.body.dataset.ilSlug) initSehirSayfasi(document.body.dataset.ilSlug);
+    if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(function () {});
   });
 
   /* ---------------- hava kodu -> açıklama / ikon / renk grubu ---------------- */
@@ -149,7 +195,25 @@
     return new Date(iso + "T00:00:00").toLocaleDateString("tr-TR", opts);
   }
 
-  function renderHero(il, current, todayMax, todayMin) {
+  function uvInfo(v) {
+    if (v == null || isNaN(v)) return "—";
+    if (v < 3) return Math.round(v) + " Düşük";
+    if (v < 6) return Math.round(v) + " Orta";
+    if (v < 8) return Math.round(v) + " Yüksek";
+    if (v < 11) return Math.round(v) + " Çok Yüksek";
+    return Math.round(v) + " Aşırı";
+  }
+
+  function aqiInfo(v) {
+    if (v == null || isNaN(v)) return "—";
+    if (v < 20) return Math.round(v) + " İyi";
+    if (v < 40) return Math.round(v) + " Makul";
+    if (v < 60) return Math.round(v) + " Orta";
+    if (v < 80) return Math.round(v) + " Kötü";
+    return Math.round(v) + " Çok Kötü";
+  }
+
+  function renderHero(il, current, todayMax, todayMin, aqi) {
     var info = codeInfo(current.weather_code);
     var isDay = current.is_day === 1;
     var hero = document.getElementById("weatherHero");
@@ -167,6 +231,8 @@
       '<div class="wh-stat"><div class="wh-label">Nem</div><div class="wh-value">%' + Math.round(current.relative_humidity_2m) + '</div></div>' +
       '<div class="wh-stat"><div class="wh-label">Rüzgar</div><div class="wh-value">' + Math.round(current.wind_speed_10m) + ' km/s</div></div>' +
       '<div class="wh-stat"><div class="wh-label">Yağış</div><div class="wh-value">' + current.precipitation.toFixed(1) + ' mm</div></div>' +
+      '<div class="wh-stat"><div class="wh-label">Hava Kalitesi</div><div class="wh-value">' + aqiInfo(aqi) + '</div></div>' +
+      '<div class="wh-stat"><div class="wh-label">UV İndeksi</div><div class="wh-value">' + uvInfo(current.uv_index) + '</div></div>' +
       '</div>';
   }
 
@@ -216,15 +282,24 @@
 
     var fUrl =
       "https://api.open-meteo.com/v1/forecast?latitude=" + il.lat + "&longitude=" + il.lon +
-      "&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,is_day" +
+      "&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,is_day,uv_index" +
       "&hourly=temperature_2m,weather_code" +
       "&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max" +
       "&timezone=Europe%2FIstanbul&forecast_days=16";
 
-    fetch(fUrl)
-      .then(function (r) { return r.json(); })
-      .then(function (data) {
-        renderHero(il, data.current, data.daily.temperature_2m_max[0], data.daily.temperature_2m_min[0]);
+    var aqiUrl =
+      "https://air-quality-api.open-meteo.com/v1/air-quality?latitude=" + il.lat + "&longitude=" + il.lon +
+      "&current=european_aqi&timezone=Europe%2FIstanbul";
+
+    Promise.all([
+      fetch(fUrl).then(function (r) { return r.json(); }),
+      fetch(aqiUrl).then(function (r) { return r.json(); }).catch(function () { return null; }),
+    ])
+      .then(function (results) {
+        var data = results[0];
+        var aqiData = results[1];
+        var aqi = aqiData && aqiData.current ? aqiData.current.european_aqi : null;
+        renderHero(il, data.current, data.daily.temperature_2m_max[0], data.daily.temperature_2m_min[0], aqi);
         renderHourly(data.hourly);
         renderDaily(data.daily);
       })
