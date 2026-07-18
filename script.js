@@ -208,22 +208,6 @@
       .join("");
   }
 
-  function renderMonth(daily, monthLabel) {
-    var note = document.getElementById("monthNote");
-    var grid = document.getElementById("monthGrid");
-    if (!note || !grid) return;
-    note.textContent =
-      "Bu, gelecek tahmini değil — geçen yıl " + monthLabel + " ayında gerçekten yaşanan günlük sıcaklık ve yağış verileridir. Gerçek meteorolojik tahminler 16 günden daha uzun bir süre için güvenilir değildir; bu bölüm sadece bu ayın geçmişte nasıl geçtiğine dair bir referans sunar.";
-    grid.innerHTML = daily.time
-      .map(function (date, i) {
-        return (
-          '<div class="month-cell"><div class="mc-date">' + fmtDate(date, { day: "numeric", month: "short" }) + '</div>' +
-          '<div class="mc-temps">' + Math.round(daily.temperature_2m_max[i]) + '° / ' + Math.round(daily.temperature_2m_min[i]) + '°</div></div>'
-        );
-      })
-      .join("");
-  }
-
   function initTabs() {
     var btns = document.querySelectorAll(".tab-btn");
     btns.forEach(function (btn) {
@@ -246,7 +230,7 @@
       "&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,is_day" +
       "&hourly=temperature_2m,weather_code" +
       "&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max" +
-      "&timezone=Europe%2FIstanbul&forecast_days=8";
+      "&timezone=Europe%2FIstanbul&forecast_days=16";
 
     fetch(fUrl)
       .then(function (r) { return r.json(); })
@@ -258,25 +242,6 @@
       .catch(function () {
         var hero = document.getElementById("weatherHero");
         if (hero) hero.innerHTML = '<p style="padding:20px;">Hava durumu verisi şu anda alınamadı, lütfen sayfayı yenileyin.</p>';
-      });
-
-    var now = new Date();
-    var y = now.getFullYear() - 1;
-    var m = now.getMonth();
-    var start = new Date(y, m, 1);
-    var end = new Date(y, m + 1, 0);
-    function iso(d) { return d.toISOString().slice(0, 10); }
-    var aUrl =
-      "https://archive-api.open-meteo.com/v1/archive?latitude=" + il.lat + "&longitude=" + il.lon +
-      "&start_date=" + iso(start) + "&end_date=" + iso(end) +
-      "&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=Europe%2FIstanbul";
-
-    fetch(aUrl)
-      .then(function (r) { return r.json(); })
-      .then(function (data) { renderMonth(data.daily, now.toLocaleDateString("tr-TR", { month: "long" })); })
-      .catch(function () {
-        var note = document.getElementById("monthNote");
-        if (note) note.textContent = "Geçmiş yıl verisi şu anda alınamadı.";
       });
   };
 })();

@@ -194,21 +194,6 @@ button { font-family: inherit; }
 .day-row .d-temps { display: flex; align-items: center; gap: 8px; font-size: .92rem; justify-self: end; }
 .day-row .d-temps .lo { color: var(--ink-muted); }
 
-/* ---------- monthly / historical panel ---------- */
-.month-note {
-  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
-  padding: 16px 18px; font-size: .9rem; color: var(--ink-muted); margin-bottom: 16px;
-}
-.month-grid {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 6px;
-}
-.month-cell {
-  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm);
-  padding: 8px 6px; text-align: center; font-size: .78rem;
-}
-.month-cell .mc-date { color: var(--ink-muted); font-size: .72rem; }
-.month-cell .mc-temps { font-weight: 700; margin-top: 3px; }
-
 /* ---------- info blurb ---------- */
 .city-info {
   margin-top: 34px; background: var(--surface); border: 1px solid var(--line);

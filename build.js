@@ -22,8 +22,8 @@ function pageHTML(il) {
     .sort((a, b) => a.ad.localeCompare(b.ad, "tr"))
     .slice(0, 8);
 
-  const title = `${il.ad} Hava Durumu – Bugün, Haftalık ve Aylık Tahmin | havadurumu81`;
-  const desc = `${il.ad} hava durumu: anlık sıcaklık, saatlik ve 7 günlük tahmin, geçen yılın aynı ayına ait geçmiş veriler. ${il.ad} için güncel hava durumunu hemen öğrenin.`;
+  const title = `${il.ad} Hava Durumu – Bugün ve 16 Günlük Tahmin | havadurumu81`;
+  const desc = `${il.ad} hava durumu: anlık sıcaklık, saatlik ve 16 günlük tahmin. ${il.ad} için güncel hava durumunu hemen öğrenin.`;
   const url = `${SITE}/${il.slug}-hava-durumu.html`;
 
   return `<!DOCTYPE html>
@@ -90,8 +90,7 @@ function pageHTML(il) {
 
     <div class="tabs">
       <button class="tab-btn active" data-tab="tabBugun">Bugün</button>
-      <button class="tab-btn" data-tab="tabHafta">Haftalık</button>
-      <button class="tab-btn" data-tab="tabAy">Bu Ay</button>
+      <button class="tab-btn" data-tab="tabHafta">16 Günlük</button>
     </div>
 
     <div class="tab-panel active" id="tabBugun">
@@ -107,11 +106,6 @@ function pageHTML(il) {
         <div class="day-row skeleton" style="height:52px;"></div>
         <div class="day-row skeleton" style="height:52px;"></div>
       </div>
-    </div>
-
-    <div class="tab-panel" id="tabAy">
-      <div class="month-note" id="monthNote">Geçen yılın verileri yükleniyor…</div>
-      <div class="month-grid" id="monthGrid"></div>
     </div>
 
     <div class="city-info">
