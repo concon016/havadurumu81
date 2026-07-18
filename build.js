@@ -117,7 +117,7 @@ function pageHTML(il) {
     <div class="city-info">
       <h2>${il.ad} İklimi Hakkında</h2>
       <p>${REGION_BLURB[il.bolge](il.ad)}</p>
-      <p>${il.ad}, ${BOLGE_ADLARI[il.bolge]} Bölgesi'nde yer alır ve ${String(il.plaka).padStart(2, "0")} plaka koduna sahiptir. Şehir merkezinin yaklaşık koordinatları: enlem ${il.lat}, boylam ${il.lon}.</p>
+      <p>${il.ad}, ${BOLGE_ADLARI[il.bolge]} Bölgesi'nde yer alır. Şehir merkezinin yaklaşık koordinatları: enlem ${il.lat}, boylam ${il.lon}.</p>
       <div class="related-cities">
         ${related.map((r) => `<a href="${r.slug}-hava-durumu.html">${r.ad} Hava Durumu</a>`).join("\n        ")}
       </div>

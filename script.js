@@ -155,7 +155,6 @@
       '<div class="wh-stat"><div class="wh-label">Nem</div><div class="wh-value">%' + Math.round(current.relative_humidity_2m) + '</div></div>' +
       '<div class="wh-stat"><div class="wh-label">Rüzgar</div><div class="wh-value">' + Math.round(current.wind_speed_10m) + ' km/s</div></div>' +
       '<div class="wh-stat"><div class="wh-label">Yağış</div><div class="wh-value">' + current.precipitation.toFixed(1) + ' mm</div></div>' +
-      '<div class="wh-stat"><div class="wh-label">Plaka</div><div class="wh-value">' + String(il.plaka).padStart(2, "0") + '</div></div>' +
       '</div>';
   }
 

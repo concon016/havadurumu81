@@ -150,7 +150,7 @@ button { font-family: inherit; }
 .weather-hero-feels { opacity: .8; font-size: .9rem; margin-top: 2px; }
 
 .weather-hero-stats {
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 26px;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 26px;
 }
 .wh-stat {
   background: rgba(255,255,255,.16); backdrop-filter: blur(6px);
@@ -239,7 +239,6 @@ button { font-family: inherit; }
   display: flex; align-items: center; justify-content: space-between;
 }
 .il-grid a:hover { border-color: var(--primary); color: var(--primary); }
-.il-grid a .g-plaka { color: var(--ink-muted); font-size: .75rem; font-weight: 400; }
 
 /* ---------- footer ---------- */
 .site-footer { border-top: 1px solid var(--line); padding: 28px 0; margin-top: 20px; }

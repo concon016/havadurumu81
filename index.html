@@ -99,7 +99,7 @@
       return (
         '<div class="bolge-block"><h3>' + BOLGE_ADLARI[b] + '</h3><div class="il-grid">' +
         list.map(function (il) {
-          return '<a href="' + il.slug + '-hava-durumu.html">' + il.ad + '<span class="g-plaka">' + String(il.plaka).padStart(2, "0") + '</span></a>';
+          return '<a href="' + il.slug + '-hava-durumu.html">' + il.ad + '</a>';
         }).join("") +
         "</div></div>"
       );
