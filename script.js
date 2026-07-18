@@ -109,13 +109,25 @@
   function codeInfo(code) { return CODE_INFO[code] || { desc: "—", group: "cloudy" }; }
 
   var ICONS = {
-    "clear-day": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="4.2"/><g stroke-linecap="round"><path d="M12 2v2.4M12 19.6V22M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2 12h2.4M19.6 12H22M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7"/></g></svg>',
-    "clear-night": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.4 6.4 0 0 0 10.5 10.5Z" stroke-linejoin="round"/></svg>',
-    cloudy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 17.5a4 4 0 0 1-.5-7.97A5 5 0 0 1 16.2 8.1 4.5 4.5 0 0 1 16.5 17.5H7Z" stroke-linejoin="round"/></svg>',
-    fog: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 9.5a4 4 0 0 1 7.3-2.6 4.5 4.5 0 0 1 4.2 3"/><path d="M3.5 13h17M3.5 16.5h17M6 20h12"/></svg>',
-    rain: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M7 14.5a4 4 0 0 1-.5-7.97A5 5 0 0 1 16.2 5.1 4.5 4.5 0 0 1 16.5 14.5H7Z" stroke-linejoin="round"/><path d="M8 17.5l-1.2 2.4M12.5 17.5l-1.2 2.4M17 17.5l-1.2 2.4"/></svg>',
-    snow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M7 13.5a4 4 0 0 1-.5-7.97A5 5 0 0 1 16.2 4.1 4.5 4.5 0 0 1 16.5 13.5H7Z" stroke-linejoin="round"/><path d="M9 17v4M12 17v4M15 17v4M7.5 19l3-1.5M10.5 19l1.5-1M13.5 18l1.5 1M16.5 19l-3-1.5"/></svg>',
-    storm: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 13.5a4 4 0 0 1-.5-7.97A5 5 0 0 1 16.2 4.1 4.5 4.5 0 0 1 16.5 13.5H7Z"/><path d="M13 13.5 10 18h3l-2 4"/></svg>',
+    "clear-day":
+      '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.6" fill="#FFC93C" stroke="#FF9F1C" stroke-width="0.6"/>' +
+      '<g stroke="#FF9F1C" stroke-width="1.9" stroke-linecap="round"><path d="M12 2.2v2.9M12 18.9v2.9M4.4 4.4l2.1 2.1M17.5 17.5l2.1 2.1M2.2 12h2.9M18.9 12h2.9M4.4 19.6l2.1-2.1M17.5 6.5l2.1-2.1"/></g></svg>',
+    "clear-night":
+      '<svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.4 6.4 0 0 0 10.5 10.5Z" fill="#FDE68A" stroke="#F5C84C" stroke-width="0.6"/>' +
+      '<circle cx="5.2" cy="5.6" r="0.9" fill="#FDE68A"/><circle cx="3.6" cy="9.8" r="0.55" fill="#FDE68A"/></svg>',
+    cloudy:
+      '<svg viewBox="0 0 24 24"><path d="M7 17.5a4 4 0 0 1-.5-7.97A5 5 0 0 1 16.2 8.1 4.5 4.5 0 0 1 16.5 17.5H7Z" fill="#B8C6D9" stroke="#8CA0B8" stroke-width="0.7"/></svg>',
+    fog:
+      '<svg viewBox="0 0 24 24" fill="none" stroke-linecap="round"><path d="M6 9.5a4 4 0 0 1 7.3-2.6 4.5 4.5 0 0 1 4.2 3" stroke="#AEBBC8" stroke-width="1.7"/><path d="M3.5 13h17M3.5 16.5h17M6 20h12" stroke="#93A4B5" stroke-width="1.7"/></svg>',
+    rain:
+      '<svg viewBox="0 0 24 24"><path d="M7 14.5a4 4 0 0 1-.5-7.97A5 5 0 0 1 16.2 5.1 4.5 4.5 0 0 1 16.5 14.5H7Z" fill="#8FA3C4" stroke="#6B84AC" stroke-width="0.7"/>' +
+      '<g stroke="#2E9BF0" stroke-width="1.9" stroke-linecap="round"><path d="M8 17.5l-1.2 2.4M12.5 17.5l-1.2 2.4M17 17.5l-1.2 2.4"/></g></svg>',
+    snow:
+      '<svg viewBox="0 0 24 24"><path d="M7 13.5a4 4 0 0 1-.5-7.97A5 5 0 0 1 16.2 4.1 4.5 4.5 0 0 1 16.5 13.5H7Z" fill="#D3E8FB" stroke="#8FC1E8" stroke-width="0.7"/>' +
+      '<g stroke="#4FA6E0" stroke-width="1.7" stroke-linecap="round"><path d="M9 17v4M12 17v4M15 17v4M7.5 19l3-1.5M10.5 19l1.5-1M13.5 18l1.5 1M16.5 19l-3-1.5"/></g></svg>',
+    storm:
+      '<svg viewBox="0 0 24 24"><path d="M7 13.5a4 4 0 0 1-.5-7.97A5 5 0 0 1 16.2 4.1 4.5 4.5 0 0 1 16.5 13.5H7Z" fill="#6E7192" stroke="#4B4E6D" stroke-width="0.7"/>' +
+      '<path d="M13 13.5 10 18h3l-2 4" fill="#FFD23F" stroke="#FFB800" stroke-width="0.8" stroke-linejoin="round"/></svg>',
   };
   function iconKey(group, isDay) {
     if (group === "clear") return isDay ? "clear-day" : "clear-night";

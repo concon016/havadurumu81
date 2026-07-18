@@ -131,13 +131,13 @@ button { font-family: inherit; }
   background: linear-gradient(160deg, var(--sky-1), var(--sky-2));
   transition: background .6s ease;
 }
-.weather-hero.cond-clear-day { background: linear-gradient(160deg, #3aa0ff, #8fd3ff); }
-.weather-hero.cond-clear-night { background: linear-gradient(160deg, #1a2547, #414f7a); }
-.weather-hero.cond-cloudy { background: linear-gradient(160deg, #8b9aab, #c4cfd8); }
-.weather-hero.cond-rain { background: linear-gradient(160deg, #4b5b6b, #728093); }
-.weather-hero.cond-snow { background: linear-gradient(160deg, #7d97ad, #d7e6f0); color: #10202c; }
-.weather-hero.cond-storm { background: linear-gradient(160deg, #2b2e3d, #4a4f68); }
-.weather-hero.cond-fog { background: linear-gradient(160deg, #97a3ab, #c9d1d6); color: #10202c; }
+.weather-hero.cond-clear-day { background: linear-gradient(160deg, #1E88E5 0%, #4FC3F7 55%, #FFD54F 145%); }
+.weather-hero.cond-clear-night { background: linear-gradient(160deg, #0B1638 0%, #2A2F6B 55%, #6A4C93 145%); }
+.weather-hero.cond-cloudy { background: linear-gradient(160deg, #5C7A99 0%, #8CA0B8 55%, #C4CFD8 145%); }
+.weather-hero.cond-rain { background: linear-gradient(160deg, #223245 0%, #3E6B96 55%, #4FC3F7 150%); }
+.weather-hero.cond-snow { background: linear-gradient(160deg, #4FC3F7 0%, #B3E5FC 65%, #EAF6FD 145%); color: #10202c; }
+.weather-hero.cond-storm { background: linear-gradient(160deg, #14162B 0%, #3B2E5A 55%, #6A4C93 150%); }
+.weather-hero.cond-fog { background: linear-gradient(160deg, #7C93A6 0%, #AEBBC8 65%, #DCE3E8 145%); color: #10202c; }
 
 .weather-hero-top {
   display: flex; align-items: flex-start; justify-content: space-between; gap: 20px;
