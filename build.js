@@ -32,6 +32,13 @@ function pageHTML(il) {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="google-site-verification" content="z1KWBFbgHZbBm0YmH_Ej9PLyjjPVtR17RNDfYOOPh_I" />
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-X38Q06SKYB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-X38Q06SKYB');
+</script>
 <title>${title}</title>
 <meta name="description" content="${desc}">
 <link rel="canonical" href="${url}">
