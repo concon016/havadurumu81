@@ -82,6 +82,28 @@
     </div>
   </section>
 
+  <section class="il-grid-section" style="padding-top:0;">
+    <div class="wrap">
+      <h2 style="text-align:center;">Türkiye Sıcaklık Haritası</h2>
+      <p style="text-align:center;">Bir ile tıklayın, anlık sıcaklığı görün ve hava durumuna gidin.</p>
+      <div class="tr-map-wrap" id="trMapWrap">
+        <div id="trMapSvgSlot"></div>
+        <button type="button" class="tr-map-back-btn" id="trMapBackBtn">← Tüm Türkiye</button>
+        <div class="tr-map-city-panel" id="trMapCityPanel">
+          <h3 id="trMapCityName"></h3>
+          <p id="trMapCityTemp"></p>
+          <a class="tr-map-city-go" id="trMapCityGo" href="#">Hava Durumuna Bak →</a>
+        </div>
+      </div>
+      <div class="tr-map-legend">
+        <span>Soğuk</span>
+        <div class="tr-map-legend-bar"></div>
+        <span>Sıcak</span>
+      </div>
+      <p class="tr-map-credit">İl sınırları verisi <a href="https://github.com/amcharts/amcharts4-geodata" target="_blank" rel="noopener">amCharts</a>, uydu görüntüsü <a href="https://www.arcgis.com/" target="_blank" rel="noopener">Esri</a> tarafından sağlanmaktadır.</p>
+    </div>
+  </section>
+
   <section class="il-grid-section" id="favSection" style="display:none;padding-top:0;padding-bottom:10px;">
     <div class="wrap">
       <h2>Favori İllerim</h2>
@@ -111,6 +133,7 @@
 </footer>
 
 <script src="data.js"></script>
+<script src="turkey-map-data.js"></script>
 <script src="script.js"></script>
 <script>
   document.getElementById("yearNow").textContent = new Date().getFullYear();

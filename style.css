@@ -250,6 +250,61 @@ button { font-family: inherit; }
 .breadcrumb { font-size: .82rem; color: var(--ink-muted); margin: 18px 0 0; }
 .breadcrumb a:hover { color: var(--primary); }
 
+/* ---------- Türkiye sıcaklık haritası ---------- */
+.tr-map-wrap {
+  max-width: 1000px; margin: 0 auto; position: relative;
+  border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-md);
+}
+.tr-map { width: 100%; height: auto; display: block; }
+.tr-map-zoom-group { transform-origin: 0 0; transition: transform .7s cubic-bezier(.22,.61,.36,1); }
+.il-path {
+  stroke: rgba(255,255,255,.65); stroke-width: .6; cursor: pointer;
+  transition: fill .15s ease, stroke-width .15s ease; vector-effect: non-scaling-stroke;
+}
+.il-path:hover, .il-path:focus-visible { stroke: #fff; stroke-width: 1.4; outline: none; }
+.il-path.selected { stroke: #fff; stroke-width: 1.8; }
+
+.tr-map-back-btn {
+  position: absolute; top: 14px; left: 14px; z-index: 10;
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(10,20,30,.55); color: #fff; border: none; border-radius: 999px;
+  padding: 8px 16px; font-size: .82rem; font-weight: 700; cursor: pointer;
+  opacity: 0; pointer-events: none; transition: opacity .25s ease;
+  backdrop-filter: blur(4px);
+}
+.tr-map-back-btn.visible { opacity: 1; pointer-events: auto; }
+
+.tr-map-city-panel {
+  position: absolute; left: 50%; bottom: 16px; z-index: 10;
+  transform: translate(-50%, 12px); background: rgba(10,20,30,.72); backdrop-filter: blur(6px);
+  color: #fff; border-radius: var(--radius); padding: 14px 20px; text-align: center;
+  opacity: 0; pointer-events: none; transition: opacity .3s ease .25s, transform .3s ease .25s;
+}
+.tr-map-city-panel.visible { opacity: 1; pointer-events: auto; transform: translate(-50%, 0); }
+.tr-map-city-panel h3 { margin: 0 0 2px; font-size: 1.05rem; }
+.tr-map-city-panel p { margin: 0 0 10px; font-size: .85rem; color: rgba(255,255,255,.85); }
+.tr-map-city-panel a.tr-map-city-go {
+  display: inline-block; background: var(--primary); color: #fff; border-radius: 100px;
+  padding: 8px 16px; font-size: .85rem; font-weight: 600;
+}
+.tr-map-tooltip {
+  position: fixed; z-index: 40; pointer-events: none;
+  background: var(--ink); color: var(--bg); font-size: .82rem; font-weight: 700;
+  padding: 6px 12px; border-radius: var(--radius-sm); box-shadow: var(--shadow-md);
+  transform: translate(-50%, -130%); white-space: nowrap; opacity: 0; transition: opacity .1s ease;
+}
+.tr-map-tooltip.visible { opacity: 1; }
+.tr-map-legend { display: flex; gap: 10px; justify-content: center; align-items: center; margin: 18px 0 6px; font-size: .82rem; color: var(--ink-muted); }
+.tr-map-legend-bar {
+  width: 180px; height: 10px; border-radius: 6px;
+  background: linear-gradient(90deg, rgb(59,111,209), rgb(79,168,224), rgb(79,191,143), rgb(240,180,41), rgb(242,121,42), rgb(230,67,42));
+}
+.tr-map-credit { text-align: center; font-size: .72rem; color: var(--ink-muted); margin-top: 10px; }
+.tr-map-credit a { color: var(--ink-muted); }
+@media (max-width: 640px) {
+  .il-path { stroke-width: .9; }
+}
+
 @media (max-width: 620px) {
   .weather-hero-stats { grid-template-columns: repeat(2, 1fr); }
   .day-row { grid-template-columns: 90px 1fr auto; }

@@ -117,6 +117,7 @@
     initSearch();
     initFavButton();
     initFavoritesHome();
+    initTemperatureMap();
     if (document.body.dataset.ilSlug) initSehirSayfasi(document.body.dataset.ilSlug);
     if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(function () {});
   });
@@ -308,4 +309,140 @@
         if (hero) hero.innerHTML = '<p style="padding:20px;">Hava durumu verisi şu anda alınamadı, lütfen sayfayı yenileyin.</p>';
       });
   };
+
+  /* ---------------- Türkiye sıcaklık haritası (anasayfa) ---------------- */
+  function tempColor(t) {
+    var stops = [
+      [-5, [59, 111, 209]],
+      [10, [79, 168, 224]],
+      [18, [79, 191, 143]],
+      [25, [240, 180, 41]],
+      [32, [242, 121, 42]],
+      [40, [230, 67, 42]],
+    ];
+    if (t <= stops[0][0]) return stops[0][1];
+    for (var i = 0; i < stops.length - 1; i++) {
+      if (t <= stops[i + 1][0]) {
+        var ratio = (t - stops[i][0]) / (stops[i + 1][0] - stops[i][0]);
+        return [0, 1, 2].map(function (k) { return Math.round(stops[i][1][k] + (stops[i + 1][1][k] - stops[i][1][k]) * ratio); });
+      }
+    }
+    return stops[stops.length - 1][1];
+  }
+
+  function initTemperatureMap() {
+    var wrap = document.getElementById("trMapWrap");
+    var svgSlot = document.getElementById("trMapSvgSlot");
+    if (!wrap || !svgSlot || typeof TURKEY_MAP_SVG === "undefined") return;
+
+    svgSlot.innerHTML = TURKEY_MAP_SVG;
+    var svg = svgSlot.querySelector(".tr-map");
+    var zoomGroup = svgSlot.querySelector("#trMapZoomGroup");
+    var vb = svg.getAttribute("viewBox").split(" ").map(Number);
+    var viewW = vb[2], viewH = vb[3];
+
+    var backBtn = document.getElementById("trMapBackBtn");
+    var cityPanel = document.getElementById("trMapCityPanel");
+    var cityNameEl = document.getElementById("trMapCityName");
+    var cityTempEl = document.getElementById("trMapCityTemp");
+    var cityGoEl = document.getElementById("trMapCityGo");
+
+    var selectedPath = null;
+    var tempBySlug = {};
+    var pathBySlug = {};
+
+    function zoomOut() {
+      zoomGroup.style.transform = "";
+      if (selectedPath) selectedPath.classList.remove("selected");
+      selectedPath = null;
+      backBtn.classList.remove("visible");
+      cityPanel.classList.remove("visible");
+    }
+
+    function zoomTo(path) {
+      if (selectedPath) selectedPath.classList.remove("selected");
+      selectedPath = path;
+      path.classList.add("selected");
+
+      var slug = path.dataset.il;
+      var ad = path.dataset.ad;
+
+      var bbox = path.getBBox();
+      var PADDING = 2.6;
+      var scale = Math.min(viewW / (bbox.width * PADDING), viewH / (bbox.height * PADDING));
+      scale = Math.min(scale, 9);
+
+      var cx = bbox.x + bbox.width / 2;
+      var cy = bbox.y + bbox.height / 2;
+      var translateX = viewW / 2 - scale * cx;
+      var translateY = viewH / 2 - scale * cy;
+
+      zoomGroup.style.transform = "translate(" + translateX + "px, " + translateY + "px) scale(" + scale + ")";
+
+      backBtn.classList.add("visible");
+      cityNameEl.textContent = ad;
+      var t = tempBySlug[slug];
+      cityTempEl.textContent = t != null ? "Şu an " + Math.round(t) + "°C" : "Yükleniyor…";
+      cityGoEl.href = slug + "-hava-durumu.html";
+      cityPanel.classList.add("visible");
+    }
+
+    backBtn.addEventListener("click", zoomOut);
+
+    var tooltip = document.createElement("div");
+    tooltip.className = "tr-map-tooltip";
+    document.body.appendChild(tooltip);
+
+    svgSlot.querySelectorAll(".il-path").forEach(function (path) {
+      var slug = path.dataset.il;
+      var ad = path.dataset.ad;
+      pathBySlug[slug] = path;
+
+      path.setAttribute("tabindex", "0");
+      path.setAttribute("role", "button");
+      path.setAttribute("aria-label", ad);
+
+      var activate = function () {
+        if (selectedPath === path) { window.location.href = slug + "-hava-durumu.html"; return; }
+        zoomTo(path);
+      };
+      path.addEventListener("click", activate);
+      path.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); activate(); }
+      });
+      path.addEventListener("mouseenter", function () {
+        var t = tempBySlug[slug];
+        tooltip.innerHTML = ad + (t != null ? " — " + Math.round(t) + "°" : "");
+        tooltip.classList.add("visible");
+      });
+      path.addEventListener("mousemove", function (e) {
+        tooltip.style.left = e.clientX + "px";
+        tooltip.style.top = e.clientY + "px";
+      });
+      path.addEventListener("mouseleave", function () { tooltip.classList.remove("visible"); });
+    });
+
+    var lat = ILLER.map(function (il) { return il.lat; }).join(",");
+    var lon = ILLER.map(function (il) { return il.lon; }).join(",");
+    var url = "https://api.open-meteo.com/v1/forecast?latitude=" + lat + "&longitude=" + lon + "&current=temperature_2m&timezone=Europe%2FIstanbul";
+
+    fetch(url)
+      .then(function (r) { return r.json(); })
+      .then(function (results) {
+        ILLER.forEach(function (il, i) {
+          var t = results[i] && results[i].current ? results[i].current.temperature_2m : null;
+          tempBySlug[il.slug] = t;
+          var path = pathBySlug[il.slug];
+          if (path && t != null) {
+            var rgb = tempColor(t);
+            path.style.fill = "rgba(" + rgb[0] + "," + rgb[1] + "," + rgb[2] + ",0.6)";
+          }
+        });
+        if (selectedPath) {
+          var t2 = tempBySlug[selectedPath.dataset.il];
+          if (t2 != null) cityTempEl.textContent = "Şu an " + Math.round(t2) + "°C";
+        }
+      })
+      .catch(function () {});
+  }
 })();
