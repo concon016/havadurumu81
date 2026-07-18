@@ -26,6 +26,21 @@ function pageHTML(il) {
   const desc = `${il.ad} hava durumu: anlık sıcaklık, saatlik ve 16 günlük tahmin. ${il.ad} için güncel hava durumunu hemen öğrenin.`;
   const url = `${SITE}/${il.slug}-hava-durumu.html`;
 
+  const faq = [
+    {
+      q: `${il.ad} hava durumu ne kadar güncel?`,
+      a: `Bu sayfadaki veriler her ziyarette anlık olarak yeniden çekilir; herhangi bir önbellekleme veya gecikme yoktur, her açılışta o anki en güncel veriyi görürsünüz.`,
+    },
+    {
+      q: `${il.ad} için kaç günlük tahmin gösteriliyor?`,
+      a: `Bugünün saatlik tahminine ek olarak önümüzdeki 16 güne kadar günlük tahmin gösterilir. Bu, güvenilir meteorolojik tahminlerin ulaşabildiği maksimum süredir; daha uzun vadeli "aylık tahmin" iddiaları meteorolojik olarak güvenilir değildir.`,
+    },
+    {
+      q: `${il.ad} hava durumu verileri nereden alınıyor?`,
+      a: `Veriler, Avrupa ve ABD'nin resmi hava tahmin modellerini birleştiren ücretsiz ve açık kaynaklı Open-Meteo servisinden alınmaktadır.`,
+    },
+  ];
+
   return `<!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -46,6 +61,11 @@ function pageHTML(il) {
 <meta property="og:description" content="${desc}">
 <meta property="og:type" content="website">
 <meta property="og:url" content="${url}">
+<meta property="og:image" content="${SITE}/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="${SITE}/assets/og-image.png">
 <meta name="robots" content="index, follow">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><text y=%2219%22 font-size=%2220%22>☀️</text></svg>">
 <link rel="stylesheet" href="style.css">
@@ -59,6 +79,15 @@ function pageHTML(il) {
   "itemListElement": [
     {"@type":"ListItem","position":1,"name":"Anasayfa","item":"${SITE}/"},
     {"@type":"ListItem","position":2,"name":"${il.ad} Hava Durumu","item":"${url}"}
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    ${faq.map((f) => `{"@type":"Question","name":${JSON.stringify(f.q)},"acceptedAnswer":{"@type":"Answer","text":${JSON.stringify(f.a)}}}`).join(",\n    ")}
   ]
 }
 </script>
@@ -123,6 +152,11 @@ function pageHTML(il) {
       <div class="related-cities">
         ${related.map((r) => `<a href="${r.slug}-hava-durumu.html">${r.ad} Hava Durumu</a>`).join("\n        ")}
       </div>
+    </div>
+
+    <div class="city-info" style="margin-top:16px;">
+      <h2>Sıkça Sorulan Sorular</h2>
+      ${faq.map((f) => `<h3 style="font-size:.98rem;margin:14px 0 4px;">${f.q}</h3>\n      <p>${f.a}</p>`).join("\n      ")}
     </div>
   </div>
 </main>
