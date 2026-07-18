@@ -231,6 +231,8 @@ button { font-family: inherit; }
   display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
 }
 .site-footer p { color: var(--ink-muted); font-size: .82rem; margin: 0; }
+.site-footer p.credit { margin-top: 4px; }
+.site-footer p.credit a { color: var(--primary); }
 .site-footer .foot-links { display: flex; gap: 14px; }
 .site-footer .foot-links a { color: var(--ink-muted); font-size: .82rem; }
 .site-footer .foot-links a:hover { color: var(--ink); }
