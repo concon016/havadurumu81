@@ -62,12 +62,23 @@
     <a href="/" class="logo"><span>havadurumu</span><span class="dot">81</span></a>
     <nav class="header-nav">
       <a href="/#iller">81 İl</a>
+      <button class="theme-toggle" id="installBtn" aria-label="Uygulamayı yükle" title="Ana ekrana ekle" style="display:none;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4.5-4.5M12 15l4.5-4.5M5 19h14"/></svg>
+      </button>
       <button class="theme-toggle" id="themeToggle" aria-label="Tema değiştir">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.4 6.4 0 0 0 10.5 10.5Z"/></svg>
       </button>
     </nav>
   </div>
 </header>
+
+<div class="install-modal-overlay" id="installModalOverlay">
+  <div class="install-modal">
+    <button class="install-modal-close" id="installModalClose" aria-label="Kapat">✕</button>
+    <h3>Ana Ekrana Ekle</h3>
+    <div id="installModalBody"></div>
+  </div>
+</div>
 
 <main>
   <div class="wrap" style="padding-top:20px;">
