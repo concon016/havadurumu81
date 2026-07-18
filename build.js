@@ -212,7 +212,6 @@ function pageHTML(il, variant) {
       <p class="credit">Bu site <a href="https://canwebco.com" target="_blank" rel="noopener">canwebco</a> tarafından tasarlanmıştır.</p>
     </div>
     <div class="foot-links">
-      <a href="/sitemap.xml">Site Haritası</a>
       <a href="/gizlilik.html">Gizlilik Politikası</a>
     </div>
   </div>
