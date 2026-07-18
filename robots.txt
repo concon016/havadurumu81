@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://havadurumu81.com/sitemap.xml
