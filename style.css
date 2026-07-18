@@ -299,8 +299,16 @@ button { font-family: inherit; }
   width: 180px; height: 10px; border-radius: 6px;
   background: linear-gradient(90deg, rgb(59,111,209), rgb(79,168,224), rgb(79,191,143), rgb(240,180,41), rgb(242,121,42), rgb(230,67,42));
 }
-.tr-map-credit { text-align: center; font-size: .72rem; color: var(--ink-muted); margin-top: 10px; }
-.tr-map-credit a { color: var(--ink-muted); }
+.photo-credit-badge {
+  position: absolute; bottom: 6px; right: 6px; z-index: 10;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: rgba(0, 0, 0, 0.4); color: rgba(255, 255, 255, 0.75);
+  font-size: 11px; font-style: italic; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0.55; transition: opacity 0.15s ease; cursor: default;
+}
+.photo-credit-badge:hover, .photo-credit-badge:focus-visible { opacity: 1; }
+
 @media (max-width: 640px) {
   .il-path { stroke-width: .9; }
 }
