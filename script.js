@@ -194,7 +194,9 @@
   function renderDaily(daily) {
     var wrap = document.getElementById("dayList");
     if (!wrap) return;
-    wrap.innerHTML = daily.time
+    var cap = parseInt(wrap.dataset.days, 10) || daily.time.length;
+    var times = daily.time.slice(0, cap);
+    wrap.innerHTML = times
       .map(function (date, i) {
         var info = codeInfo(daily.weather_code[i]);
         var name = i === 0 ? "Bugün" : i === 1 ? "Yarın" : fmtDate(date, { weekday: "long" });
@@ -208,22 +210,9 @@
       .join("");
   }
 
-  function initTabs() {
-    var btns = document.querySelectorAll(".tab-btn");
-    btns.forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        btns.forEach(function (b) { b.classList.remove("active"); });
-        document.querySelectorAll(".tab-panel").forEach(function (p) { p.classList.remove("active"); });
-        btn.classList.add("active");
-        document.getElementById(btn.dataset.tab).classList.add("active");
-      });
-    });
-  }
-
   window.initSehirSayfasi = function (slug) {
     var il = findIl(slug);
     if (!il) return;
-    initTabs();
 
     var fUrl =
       "https://api.open-meteo.com/v1/forecast?latitude=" + il.lat + "&longitude=" + il.lon +

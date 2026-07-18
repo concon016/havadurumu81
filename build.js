@@ -1,4 +1,4 @@
-// Yerel üretim script'i — 81 il sayfasını + sitemap.xml'i data.js'den üretir.
+// Yerel üretim script'i — her il için 3 ayrı sayfa (günlük/haftalık/2 haftalık) + sitemap.xml'i data.js'den üretir.
 // Deploy edilen siteye dahil değildir, sadece bu klasörde çalıştırılır: node build.js
 
 const fs = require("fs");
@@ -17,29 +17,86 @@ const REGION_BLURB = {
   guneydogu: (ad) => `Güneydoğu Anadolu Bölgesi'nde yer alan ${ad}, yazları çok sıcak ve kurak, kışları ise ılık ve az yağışlı geçen karasal-Akdeniz karışımı bir iklime sahiptir.`,
 };
 
-function pageHTML(il) {
-  const related = ILLER.filter((x) => x.bolge === il.bolge && x.slug !== il.slug)
-    .sort((a, b) => a.ad.localeCompare(b.ad, "tr"))
-    .slice(0, 8);
+const VARIANTS = [
+  { key: "gunluk", suffix: "-hava-durumu.html", nav: "Günlük", h1: (ad) => `${ad} Hava Durumu`, titleMid: "Hava Durumu – Günlük Tahmin", days: null },
+  { key: "haftalik", suffix: "-haftalik-hava-durumu.html", nav: "Haftalık", h1: (ad) => `${ad} Haftalık Hava Durumu`, titleMid: "Haftalık Hava Durumu – 7 Günlük Tahmin", days: 7 },
+  { key: "iki-haftalik", suffix: "-2-haftalik-hava-durumu.html", nav: "2 Haftalık", h1: (ad) => `${ad} 2 Haftalık Hava Durumu`, titleMid: "2 Haftalık Hava Durumu – 16 Günlük Tahmin", days: 16 },
+];
 
-  const title = `${il.ad} Hava Durumu – Bugün ve 16 Günlük Tahmin | havadurumu81`;
-  const desc = `${il.ad} hava durumu: anlık sıcaklık, saatlik ve 16 günlük tahmin. ${il.ad} için güncel hava durumunu hemen öğrenin.`;
-  const url = `${SITE}/${il.slug}-hava-durumu.html`;
-
-  const faq = [
+function faqFor(il, variant) {
+  const base = [
     {
       q: `${il.ad} hava durumu ne kadar güncel?`,
       a: `Bu sayfadaki veriler her ziyarette anlık olarak yeniden çekilir; herhangi bir önbellekleme veya gecikme yoktur, her açılışta o anki en güncel veriyi görürsünüz.`,
-    },
-    {
-      q: `${il.ad} için kaç günlük tahmin gösteriliyor?`,
-      a: `Bugünün saatlik tahminine ek olarak önümüzdeki 16 güne kadar günlük tahmin gösterilir. Bu, güvenilir meteorolojik tahminlerin ulaşabildiği maksimum süredir; daha uzun vadeli "aylık tahmin" iddiaları meteorolojik olarak güvenilir değildir.`,
     },
     {
       q: `${il.ad} hava durumu verileri nereden alınıyor?`,
       a: `Veriler, Avrupa ve ABD'nin resmi hava tahmin modellerini birleştiren ücretsiz ve açık kaynaklı Open-Meteo servisinden alınmaktadır.`,
     },
   ];
+  if (variant.key === "gunluk") {
+    base.splice(1, 0, {
+      q: `${il.ad} için saatlik tahmin var mı?`,
+      a: `Evet, bugünün önümüzdeki 24 saati için saatlik sıcaklık ve hava durumu tahmini gösterilir. Daha uzun vade için ${il.ad} haftalık ve 2 haftalık hava durumu sayfalarına bakabilirsiniz.`,
+    });
+  } else if (variant.key === "haftalik") {
+    base.splice(1, 0, {
+      q: `${il.ad} haftalık hava durumu tahmini ne kadar güvenilir?`,
+      a: `7 günlük tahminler meteorolojik olarak oldukça güvenilirdir; ilk 3-4 gün için doğruluk çok yüksek, 5-7. günler için ise genel eğilim (sıcaklık aralığı, yağış olasılığı) doğru bir tahmindir.`,
+    });
+  } else {
+    base.splice(1, 0, {
+      q: `2 haftalık (16 günlük) tahmin ne kadar doğru?`,
+      a: `16 gün, güvenilir hava tahmin modellerinin ulaşabildiği maksimum süredir. İlk hafta yüksek doğrulukta, ikinci hafta ise genel sıcaklık eğilimi ve yağış olasılığı şeklinde yorumlanmalıdır. Bunun ötesindeki "aylık tahmin" iddiaları meteorolojik olarak güvenilir değildir.`,
+    });
+  }
+  return base;
+}
+
+function pageHTML(il, variant) {
+  const related = ILLER.filter((x) => x.bolge === il.bolge && x.slug !== il.slug)
+    .sort((a, b) => a.ad.localeCompare(b.ad, "tr"))
+    .slice(0, 8);
+
+  const title = `${il.ad} ${variant.titleMid} | havadurumu81`;
+  const desc =
+    variant.key === "gunluk"
+      ? `${il.ad} hava durumu: anlık sıcaklık ve saatlik tahmin. ${il.ad} için güncel hava durumunu hemen öğrenin.`
+      : variant.key === "haftalik"
+      ? `${il.ad} haftalık hava durumu: önümüzdeki 7 gün için günlük sıcaklık, yağış olasılığı ve detaylı tahmin.`
+      : `${il.ad} 2 haftalık hava durumu: önümüzdeki 16 gün için günlük sıcaklık, yağış olasılığı ve detaylı tahmin.`;
+  const url = `${SITE}/${il.slug}${variant.suffix}`;
+  const gunlukUrl = `${SITE}/${il.slug}-hava-durumu.html`;
+  const h1 = variant.h1(il.ad);
+  const faq = faqFor(il, variant);
+
+  const breadcrumbItems =
+    variant.key === "gunluk"
+      ? [
+          { name: "Anasayfa", item: `${SITE}/` },
+          { name: h1, item: url },
+        ]
+      : [
+          { name: "Anasayfa", item: `${SITE}/` },
+          { name: `${il.ad} Hava Durumu`, item: gunlukUrl },
+          { name: h1, item: url },
+        ];
+
+  const navRow = VARIANTS.map(
+    (v) => `<a class="tab-btn${v.key === variant.key ? " active" : ""}" href="${il.slug}${v.suffix}">${v.nav}</a>`
+  ).join("\n      ");
+
+  const bodyMain =
+    variant.key === "gunluk"
+      ? `<div class="hourly-row" id="hourlyRow">
+        <div class="hour-card skeleton" style="height:88px;"></div>
+        <div class="hour-card skeleton" style="height:88px;"></div>
+        <div class="hour-card skeleton" style="height:88px;"></div>
+      </div>`
+      : `<div class="day-list" id="dayList" data-days="${variant.days}">
+        <div class="day-row skeleton" style="height:52px;"></div>
+        <div class="day-row skeleton" style="height:52px;"></div>
+      </div>`;
 
   return `<!DOCTYPE html>
 <html lang="tr">
@@ -57,7 +114,7 @@ function pageHTML(il) {
 <title>${title}</title>
 <meta name="description" content="${desc}">
 <link rel="canonical" href="${url}">
-<meta property="og:title" content="${il.ad} Hava Durumu">
+<meta property="og:title" content="${h1}">
 <meta property="og:description" content="${desc}">
 <meta property="og:type" content="website">
 <meta property="og:url" content="${url}">
@@ -77,8 +134,7 @@ function pageHTML(il) {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   "itemListElement": [
-    {"@type":"ListItem","position":1,"name":"Anasayfa","item":"${SITE}/"},
-    {"@type":"ListItem","position":2,"name":"${il.ad} Hava Durumu","item":"${url}"}
+    ${breadcrumbItems.map((b, i) => `{"@type":"ListItem","position":${i + 1},"name":${JSON.stringify(b.name)},"item":${JSON.stringify(b.item)}}`).join(",\n    ")}
   ]
 }
 </script>
@@ -115,34 +171,22 @@ function pageHTML(il) {
       </span>
       <ul class="search-suggest" id="ilSearchSuggest"></ul>
     </div>
-    <p class="breadcrumb"><a href="/">Anasayfa</a> / ${il.ad} Hava Durumu</p>
+    <p class="breadcrumb">${breadcrumbItems.map((b, i) => (i === breadcrumbItems.length - 1 ? b.name : `<a href="${b.item}">${b.name}</a>`)).join(" / ")}</p>
   </div>
 
   <div class="wrap" style="padding-top:18px;padding-bottom:50px;">
-    <h1 style="font-size:1.5rem;margin:0 0 16px;">${il.ad} Hava Durumu</h1>
+    <h1 style="font-size:1.5rem;margin:0 0 16px;">${h1}</h1>
 
     <div class="weather-hero" id="weatherHero">
       <div style="padding:30px;text-align:center;opacity:.7;">Hava durumu yükleniyor…</div>
     </div>
 
     <div class="tabs">
-      <button class="tab-btn active" data-tab="tabBugun">Bugün</button>
-      <button class="tab-btn" data-tab="tabHafta">16 Günlük</button>
+      ${navRow}
     </div>
 
-    <div class="tab-panel active" id="tabBugun">
-      <div class="hourly-row" id="hourlyRow">
-        <div class="hour-card skeleton" style="height:88px;"></div>
-        <div class="hour-card skeleton" style="height:88px;"></div>
-        <div class="hour-card skeleton" style="height:88px;"></div>
-      </div>
-    </div>
-
-    <div class="tab-panel" id="tabHafta">
-      <div class="day-list" id="dayList">
-        <div class="day-row skeleton" style="height:52px;"></div>
-        <div class="day-row skeleton" style="height:52px;"></div>
-      </div>
+    <div class="tab-panel active">
+      ${bodyMain}
     </div>
 
     <div class="city-info">
@@ -150,7 +194,7 @@ function pageHTML(il) {
       <p>${REGION_BLURB[il.bolge](il.ad)}</p>
       <p>${il.ad}, ${BOLGE_ADLARI[il.bolge]} Bölgesi'nde yer alır. Şehir merkezinin yaklaşık koordinatları: enlem ${il.lat}, boylam ${il.lon}.</p>
       <div class="related-cities">
-        ${related.map((r) => `<a href="${r.slug}-hava-durumu.html">${r.ad} Hava Durumu</a>`).join("\n        ")}
+        ${related.map((r) => `<a href="${r.slug}${variant.suffix}">${r.ad} ${variant.nav} Hava Durumu</a>`).join("\n        ")}
       </div>
     </div>
 
@@ -180,25 +224,27 @@ function pageHTML(il) {
 
 function build() {
   const dir = __dirname;
+  const urls = [];
+  const today = new Date().toISOString().slice(0, 10);
+
+  urls.push(`  <url><loc>${SITE}/</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>`);
+
   ILLER.forEach((il) => {
-    fs.writeFileSync(path.join(dir, `${il.slug}-hava-durumu.html`), pageHTML(il), "utf8");
+    VARIANTS.forEach((variant) => {
+      const fileName = `${il.slug}${variant.suffix}`;
+      fs.writeFileSync(path.join(dir, fileName), pageHTML(il, variant), "utf8");
+      const priority = variant.key === "gunluk" ? "0.8" : "0.7";
+      urls.push(`  <url><loc>${SITE}/${fileName}</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>${priority}</priority></url>`);
+    });
   });
 
-  const today = new Date().toISOString().slice(0, 10);
-  const urls = [
-    `  <url><loc>${SITE}/</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>`,
-    ...ILLER.map(
-      (il) =>
-        `  <url><loc>${SITE}/${il.slug}-hava-durumu.html</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>`
-    ),
-  ];
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join("\n")}\n</urlset>\n`;
   fs.writeFileSync(path.join(dir, "sitemap.xml"), sitemap, "utf8");
 
   const robots = `User-agent: *\nAllow: /\n\nSitemap: ${SITE}/sitemap.xml\n`;
   fs.writeFileSync(path.join(dir, "robots.txt"), robots, "utf8");
 
-  console.log(`${ILLER.length} il sayfası + sitemap.xml + robots.txt üretildi.`);
+  console.log(`${ILLER.length} il × ${VARIANTS.length} varyant = ${ILLER.length * VARIANTS.length} sayfa + sitemap.xml + robots.txt üretildi.`);
 }
 
 build();
